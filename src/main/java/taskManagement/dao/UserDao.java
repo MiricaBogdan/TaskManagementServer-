@@ -1,91 +1,50 @@
 package taskManagement.dao;
 
+import static javax.transaction.Transactional.TxType.REQUIRED;
+import static javax.transaction.Transactional.TxType.SUPPORTS;
+
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 
-import taskManagement.util.EntityManagerFactorySingleton;
 import taskManagement.Entity.User;
-
+@Stateless
+@Transactional(SUPPORTS)
 public class UserDao {
 	
-	EntityManagerFactory emf = EntityManagerFactorySingleton.getEntityManagerFactory();
+    @PersistenceContext(unitName="PersistenceUnit")
+    private EntityManager em;
 	
 	//Create a new user in the database
-	public void createUser(User user)
+    @Transactional(REQUIRED)
+	public void createUser(@NotNull User user)
 	{
-		EntityManager em=emf.createEntityManager();
-		try {
-			EntityTransaction t=em.getTransaction();
-			try {
-				t.begin();
-				em.persist(user);
-				t.commit();
-			}
-			finally {
-				if(t.isActive())
-				t.rollback();
-			}
-		}
-		finally {
-			em.close();
-		}
+		em.persist(user);
 	}
 	
 	//Select a user from database
-		public User selectUser(int id) {
-			EntityManager em = emf.createEntityManager();
-			User user = null;
-			try {
-				user = em.find(User.class, id);
-			} catch (Exception e) {
-				System.out.println(e);
-			} finally {
-				em.close();
-			}
-			return user;
-		}
+	public User selectUser(@NotNull int id) {
 		
+		User user = null;
+		user = em.find(User.class, id);
+		System.out.println(user==null);
+		return user;
+	}
 		
 	//Update the detail about user
-	public void updateUser(User user)
+	@Transactional(REQUIRED)
+	public void updateUser(@NotNull User user)
 	{
-		EntityManager em = emf.createEntityManager();
-		try {
-			EntityTransaction t = em.getTransaction();
-			try {
-				User u = em.find(User.class, user.getId());
-				t.begin();
-				u.setName(user.getName());
-				u.setPassword(user.getPassword());
-				t.commit();
-			} finally {
-				if (t.isActive())
-					t.rollback();
-			}
-		} finally {
-			em.close();
-		}
+		User u = em.find(User.class, user.getId());
+		u.setName(user.getName());
+		u.setPassword(user.getPassword());
 	}
 	
 	//Delete a user from database
-	public void deleteUser(int id) {
-		EntityManager em = emf.createEntityManager();
-		try {
-			EntityTransaction t = em.getTransaction();
-			try {
-				User user = em.find(User.class, id);
-				t.begin();
-				em.remove(user);
-				em.merge(user);
-				t.commit();
-			} finally {
-				if (t.isActive())
-					t.rollback();
-			}
-		} finally {
-			em.close();
-		}
+	@Transactional(REQUIRED)
+	public void deleteUser(@NotNull int id) {
+		em.remove(em.getReference(User.class, id));
 	}
-	
 }

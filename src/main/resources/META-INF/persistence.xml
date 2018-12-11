@@ -5,13 +5,14 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
              http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
      	
-   <persistence-unit name="PersistenceUnit">
-   		<properties>
-   			<property name="java.persistence.jdbc.driver" value="com.mysql.jdbc.driver"/>
-   			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/taskmanagement" />
-            <property name="javax.persistence.jdbc.user" value="root" />
-            <property name="javax.persistence.jdbc.password" value="root" />
-   		</properties>
+  <persistence-unit name="PersistenceUnit" transaction-type="JTA">
+ 	<jta-data-source>java:/MySqlDS</jta-data-source>
+  
+   		<class>taskManagement.Entity.Task</class>
+   		<class>taskManagement.Entity.Story</class>
+   		<class>taskManagement.Entity.User</class>
+   
+   		
    </persistence-unit>            
       
 </persistence>
