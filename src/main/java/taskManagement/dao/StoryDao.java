@@ -1,91 +1,69 @@
 package taskManagement.dao;
 
+import static javax.transaction.Transactional.TxType.REQUIRED;
+import static javax.transaction.Transactional.TxType.SUPPORTS;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import taskManagement.Entity.Story;
-import taskManagement.util.EntityManagerFactorySingleton;
+import taskManagement.Entity.User;
+import taskManagement.dto.StoryDTO;
 
+@Stateless
+@Transactional(SUPPORTS)
 public class StoryDao {
 
-EntityManagerFactory emf = EntityManagerFactorySingleton.getEntityManagerFactory();
+	 @PersistenceContext(unitName = "PersistenceUnit")
+	 private EntityManager em;
 	
 	//Create a new Story in the database
-	public void createStory(Story story)
-	{
-		EntityManager em=emf.createEntityManager();
-		try {
-			EntityTransaction t=em.getTransaction();
-			try {
-				t.begin();
-				em.persist(story);
-				t.commit();
-			}
-			finally {
-				if(t.isActive())
-				t.rollback();
-			}
-		}
-		finally {
-			em.close();
-		}
-	}
-	
-	//Select a story from database
-	public Story selectStory(int id) {
-		EntityManager em = emf.createEntityManager();
-		Story story = null;
-		try {
-			story = em.find(Story.class, id);
-		} catch (Exception e) {
-			System.out.println(e);
-		} finally {
-			em.close();
-		}
+	@Transactional(REQUIRED) 
+	public Story createStory(@NotNull StoryDTO storyDto){
+		Story story=new Story();
+		story.setName(storyDto.getName());
+		story.setDescription(storyDto.getDescription());
+		story.setState(storyDto.getState());
+		story.setStart_time(storyDto.getStart_time());
+		story.setFinish_time(storyDto.getFinish_time());
+		story.setUser(em.find(User.class, storyDto.getCreated_by()));
+		em.persist(story);
 		return story;
 	}
 	
+	//Select a story from database
+	public StoryDTO selectStory(@NotNull int id) {
+		Story story = em.find(Story.class, id);
+		StoryDTO storyDto=new StoryDTO();
+		storyDto.setId(story.getId());
+		storyDto.setName(story.getName());
+		storyDto.setDescription(story.getDescription());
+		storyDto.setStart_time(story.getStart_time());
+		storyDto.setFinish_time(story.getFinish_time());
+		storyDto.setState(story.getState());
+		storyDto.setCreated_by(story.getUser().getId());
+		return storyDto;
+	}
+		
 	//Update the detail about task
-	public void updateStory(Story story)
+	@Transactional(REQUIRED)
+	public StoryDTO updateStory(@NotNull StoryDTO storyDto)
 	{
-		EntityManager em=emf.createEntityManager();
-		try {
-			EntityTransaction t=em.getTransaction();
-			try {
-				Story updatedstory=em.find(Story.class, story.getId());
-				t.begin();
-				updatedstory.setName(story.getName());
-				updatedstory.setDescription(story.getDescription());
-				updatedstory.setState(story.getState());
-			}
-			finally {
-				
-			}
-		}
-		finally
-		{
-			
-		}
+		Story updatedstory=em.find(Story.class, storyDto.getId());
+		updatedstory.setName(storyDto.getName());
+		updatedstory.setDescription(storyDto.getDescription());
+		updatedstory.setState(storyDto.getState());
+		updatedstory.setStart_time(storyDto.getStart_time());
+		updatedstory.setFinish_time(storyDto.getFinish_time());
+		updatedstory.setUser(em.find(User.class, storyDto.getCreated_by()));
+		return storyDto;
 	}
 	
 	//Delete a story from database
-	public void deletestory(int id) {
-		EntityManager em = emf.createEntityManager();
-		try {
-			EntityTransaction t = em.getTransaction();
-			try {
-				Story story = em.find(Story.class, id);
-				t.begin();
-				em.remove(story);
-				em.merge(story);
-				t.commit();
-			} finally {
-				if (t.isActive())
-					t.rollback();
-			}
-		} finally {
-			em.close();
-		}
+	@Transactional(REQUIRED)
+	public void deletestory(@NotNull int id) {
+		Story story = em.find(Story.class, id);
+		em.remove(story);
 	}
 }

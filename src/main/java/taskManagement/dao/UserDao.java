@@ -10,7 +10,8 @@ import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 
 import taskManagement.Entity.User;
-@Stateless
+import taskManagement.dto.UserDTO;
+@Stateless()
 @Transactional(SUPPORTS)
 public class UserDao {
 	
@@ -19,27 +20,30 @@ public class UserDao {
 	
 	//Create a new user in the database
     @Transactional(REQUIRED)
-	public void createUser(@NotNull User user)
+	public User createUser(@NotNull User user)
 	{
 		em.persist(user);
+		return user;
 	}
 	
 	//Select a user from database
-	public User selectUser(@NotNull int id) {
-		
-		User user = null;
-		user = em.find(User.class, id);
-		System.out.println(user==null);
-		return user;
+	public UserDTO selectUser(@NotNull int id) {
+		User user = em.find(User.class, id);
+		UserDTO userDto=new UserDTO();
+		userDto.setId(user.getId());
+		userDto.setName(user.getName());
+		userDto.setPassword(user.getPassword());
+		return userDto;
 	}
 		
 	//Update the detail about user
 	@Transactional(REQUIRED)
-	public void updateUser(@NotNull User user)
+	public UserDTO updateUser(@NotNull UserDTO userDto)
 	{
-		User u = em.find(User.class, user.getId());
-		u.setName(user.getName());
-		u.setPassword(user.getPassword());
+		User u = em.find(User.class, userDto.getId());
+		u.setName(userDto.getName());
+		u.setPassword(userDto.getPassword());
+		return userDto;
 	}
 	
 	//Delete a user from database

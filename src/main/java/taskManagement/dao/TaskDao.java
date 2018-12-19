@@ -1,91 +1,56 @@
 package taskManagement.dao;
 
+import static javax.transaction.Transactional.TxType.REQUIRED;
+import static javax.transaction.Transactional.TxType.SUPPORTS;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import taskManagement.Entity.Task;
-import taskManagement.util.EntityManagerFactorySingleton;
+import taskManagement.dto.TaskDTO;
 
+@Stateless
+@Transactional(SUPPORTS)
 public class TaskDao {
 	
-	EntityManagerFactory emf = EntityManagerFactorySingleton.getEntityManagerFactory();
+	 @PersistenceContext(unitName = "PersistenceUnit")
+	 private EntityManager em;
 	
 	//Create a new task in the database
-	public void createTask(Task task)
+	@Transactional(REQUIRED)
+	public Task createTask(@NotNull Task task)
 	{
-		EntityManager em=emf.createEntityManager();
-		try {
-			EntityTransaction t=em.getTransaction();
-			try {
-				t.begin();
-				em.persist(task);
-				t.commit();
-			}
-			finally {
-				if(t.isActive())
-				t.rollback();
-			}
-		}
-		finally {
-			em.close();
-		}
-	}
-	
-	//Select a task from database
-	public Task selectTask(int id) {
-		EntityManager em = emf.createEntityManager();
-		Task task = null;
-		try {
-			task = em.find(Task.class, id);
-		} catch (Exception e) {
-			System.out.println(e);
-		} finally {
-			em.close();
-		}
+		em.persist(task);
 		return task;
 	}
 	
+	//Select a task from database
+	public TaskDTO selectTask(@NotNull int id) {
+		Task task = em.find(Task.class, id);
+		TaskDTO taskDto=new TaskDTO();
+		taskDto.setId(task.getId());
+		taskDto.setName(task.getName());
+		taskDto.setDescription(task.getDescription());
+		taskDto.setState(task.getState());
+		return taskDto;
+	}
+	
 	//Update the detail about task
-	public void updateTask(Task task)
+	@Transactional(REQUIRED)
+	public TaskDTO updateTask(@NotNull TaskDTO taskDto)
 	{
-		EntityManager em=emf.createEntityManager();
-		try {
-			EntityTransaction t=em.getTransaction();
-			try {
-				Task updatedTask=em.find(Task.class, task.getId());
-				t.begin();
-				updatedTask.setName(task.getName());
-				updatedTask.setDescription(task.getDescription());
-				updatedTask.setState(task.getState());
-			}
-			finally {
-				
-			}
-		}
-		finally
-		{
-			
-		}
+		Task updatedTask=em.find(Task.class, taskDto.getId());
+		updatedTask.setName(taskDto.getName());
+		updatedTask.setDescription(taskDto.getDescription());
+		updatedTask.setState(taskDto.getState());
+		return taskDto;
 	}
 	
 	//Delete a task from database
-	public void deletetask(int id) {
-		EntityManager em = emf.createEntityManager();
-		try {
-			EntityTransaction t = em.getTransaction();
-			try {
-				Task task = em.find(Task.class, id);
-				t.begin();
-				em.remove(task);
-				em.merge(task);
-				t.commit();
-			} finally {
-				if (t.isActive())
-					t.rollback();
-			}
-		} finally {
-			em.close();
-		}
+	@Transactional(REQUIRED)
+	public void deletetask(@NotNull int id) {
+		Task task = em.find(Task.class, id);
+		em.remove(task);
 	}
 }

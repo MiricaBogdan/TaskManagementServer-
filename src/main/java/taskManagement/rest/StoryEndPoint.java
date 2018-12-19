@@ -14,52 +14,51 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import taskManagement.Entity.User;
-import taskManagement.dto.UserDTO;
-import taskManagement.dao.UserDao;
+import taskManagement.Entity.Story;
+import taskManagement.dao.StoryDao;
+import taskManagement.dto.StoryDTO;
 
-@Path("/user")
-public class UserEndPoint {
-
+@Path("/story")
+public class StoryEndPoint {
+	
 	@Inject
-	UserDao userDao;
+	StoryDao storyDao;
 
 	@POST
     @Consumes(APPLICATION_JSON)
-	public Response createUser(User user, @Context UriInfo uriInfo) {
-		user=userDao.createUser(user);
-		URI createdURI = uriInfo.getBaseUriBuilder().path(user.getId().toString()).build();
+	public Response createStory(StoryDTO storyDto, @Context UriInfo uriInfo) {
+		Story story=storyDao.createStory(storyDto);
+		URI createdURI = uriInfo.getBaseUriBuilder().path(story.getId().toString()).build();
 		return Response.created(createdURI).build();
 	}
 
 	@GET
     @Path("{id}")
     @Produces(APPLICATION_JSON)
-	public Response selectUser(@PathParam("id") Integer id) {	
-		UserDTO userDto=userDao.selectUser(id);
-		if(userDto==null)
+	public Response selectStory(@PathParam("id") Integer id) {
+		StoryDTO storyDto=storyDao.selectStory(id);
+		if(storyDto==null)
 		{
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		return Response.ok(userDto).build();
+		return Response.ok(storyDto).build();
 	}
 
 	@PUT
 	@Path("{id}")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
-	public Response updateUser(@PathParam("id") Integer id,UserDTO userDto) {
-		userDto.setId(id);
-		userDto=userDao.updateUser(userDto);
-		return Response.ok(userDto).build();
+	public Response updateStory(@PathParam("id") Integer id,StoryDTO storyDto) {
+		storyDto.setId(id);
+		storyDto=storyDao.updateStory(storyDto);
+		return Response.ok(storyDto).build();
 	}
 
 	@DELETE
 	@Path("{id}")
-	public Response deleteUser(@PathParam("id") Integer id) {
-		userDao.deleteUser(id);
+	public Response deletestory(@PathParam("id") Integer id) {
+		storyDao.deletestory(id);
 		return Response.noContent().build();
 	}
-	
-	
+
 }
