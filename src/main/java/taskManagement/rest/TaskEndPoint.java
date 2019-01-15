@@ -3,6 +3,7 @@ package taskManagement.rest;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -13,6 +14,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -29,8 +31,8 @@ public class TaskEndPoint {
 
 	@POST
     @Consumes(APPLICATION_JSON)
-	public Response createTask(Task task, @Context UriInfo uriInfo) {
-		task=taskDao.createTask(task);
+	public Response createTask(TaskDTO taskDto, @Context UriInfo uriInfo) {
+		Task task=taskDao.createTask(taskDto);
 		URI createdURI = uriInfo.getBaseUriBuilder().path(task.getId().toString()).build();
 		return Response.created(createdURI).build();
 	}
@@ -45,6 +47,14 @@ public class TaskEndPoint {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 		return Response.ok(taskDto).build();
+	}
+	
+	@GET
+    @Path("/getTasksForProject")
+    @Produces(APPLICATION_JSON)
+	public Response getTasksForProject(@QueryParam("projectId") Integer id) {
+		List<TaskDTO> userProjects=taskDao.getTasksForProject(id);
+		return Response.ok(userProjects).build();
 	}
 
 	@PUT

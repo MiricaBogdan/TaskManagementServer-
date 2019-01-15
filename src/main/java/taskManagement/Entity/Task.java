@@ -1,5 +1,7 @@
 package taskManagement.Entity;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,27 +31,57 @@ public class Task {
 	@Size(min = 1, max = 10000)
 	private String description;
 	
+	private Date start_time;
+	private Date finish_time;
+	
+	public Date getStart_time() {
+		return start_time;
+	}
+
+	public void setStart_time(Date start_time) {
+		this.start_time = start_time;
+	}
+
+	public Date getFinish_time() {
+		return finish_time;
+	}
+
+	public void setFinish_time(Date finish_time) {
+		this.finish_time = finish_time;
+	}
+
 	@NotNull
 	private int state;
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "created_by")
-	private User user;
+	private User createdByUser;
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "story_id")
-	private Story story;
-
+	@JoinColumn(name = "project_id")
+	private Project project;
+	
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "assigned_to")
+	private User assignedToUser;
+	
 	public Task(){
 		
 	}
-	
-	public Task(String name,String description,int state){
-		this.name=name;
-		this.description=description;
-		this.state=state;
+
+	public Task(String name, String description, Date start_time, Date finish_time, int state, User createdByUser,
+			Project project, User assignedToUser) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.start_time = start_time;
+		this.finish_time = finish_time;
+		this.state = state;
+		this.createdByUser = createdByUser;
+		this.project = project;
+		this.assignedToUser = assignedToUser;
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -82,20 +114,28 @@ public class Task {
 		this.state = state;
 	}
 
-	public User getUser() {
-		return user;
+	public Project getProject() {
+		return project;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
-	public Story getStory() {
-		return story;
+	public User getCreatedByUser() {
+		return createdByUser;
 	}
 
-	public void setStory(Story story) {
-		this.story = story;
+	public void setCreatedByUser(User createdByUser) {
+		this.createdByUser = createdByUser;
+	}
+
+	public User getAssignedToUser() {
+		return assignedToUser;
+	}
+
+	public void setAssignedToUser(User assignedToUser) {
+		this.assignedToUser = assignedToUser;
 	}
 
 	@Override

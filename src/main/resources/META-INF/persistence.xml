@@ -9,10 +9,11 @@
  	<jta-data-source>java:/MySqlDS</jta-data-source>
   
    		<class>taskManagement.Entity.Task</class>
-   		<class>taskManagement.Entity.Story</class>
+   		<class>taskManagement.Entity.Project</class>
    		<class>taskManagement.Entity.User</class>
+   		<class>taskManagement.Entity.ProjectUser</class>
    
    		
-   </persistence-unit>            
+  </persistence-unit>            
       
 </persistence>

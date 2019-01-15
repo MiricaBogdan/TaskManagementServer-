@@ -2,6 +2,7 @@ package taskManagement.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.net.URI;
+import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -61,5 +62,29 @@ public class UserEndPoint {
 		return Response.noContent().build();
 	}
 	
-	
+	@GET
+	@Produces(APPLICATION_JSON)
+	public Response findAll() {
+		List<UserDTO> userDtoList=userDao.findAll();
+		if(userDtoList.size()==0)
+		{
+			return Response.status(Response.Status.NO_CONTENT).build();
+		}
+		return Response.ok(userDtoList).build();
+	}
+
+	@POST
+    @Path("/login")
+    @Consumes(APPLICATION_JSON)
+	public Response login(UserDTO UserDto) {
+		String name=UserDto.getName();
+		String password=UserDto.getPassword();
+		System.out.println(name);
+		Integer id=userDao.login(name,password);
+		if(id==null)
+		{
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		return Response.ok(id).build();
+	}
 }

@@ -34,12 +34,19 @@ public class User {
 	private String password;
 	
 	@NotNull
-	@OneToMany(mappedBy="user",fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<Story> story=new ArrayList<Story>();
+	@OneToMany(mappedBy="projectOwner",fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+	private List<Project> projects=new ArrayList<Project>();
 	
 	@NotNull
+	@OneToMany(mappedBy="createdByUser",fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+	private List<Task> createdTasks=new ArrayList<Task>();
+	
+	@NotNull
+	@OneToMany(mappedBy="assignedToUser",fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+	private List<Task> assignedTasks=new ArrayList<Task>();
+	
 	@OneToMany(mappedBy="user",fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<Task> task=new ArrayList<Task>();
+	private List<ProjectUser> userProjects=new ArrayList<>();
 	
 	public User() {
 		
@@ -70,20 +77,36 @@ public class User {
 		this.password = password;
 	}
 
-	public List<Story> getStory() {
-		return story;
+	public List<Project> getProjects() {
+		return projects;
 	}
 
-	public void setStory(List<Story> story) {
-		this.story = story;
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
 	}
 
-	public List<Task> getTask() {
-		return task;
+	public List<Task> getCreatedTasks() {
+		return createdTasks;
 	}
 
-	public void setTask(List<Task> task) {
-		this.task = task;
+	public void setCreatedTasks(List<Task> createdTasks) {
+		this.createdTasks = createdTasks;
+	}
+
+	public List<Task> getAssignedTasks() {
+		return assignedTasks;
+	}
+
+	public void setAssignedTasks(List<Task> assignedTasks) {
+		this.assignedTasks = assignedTasks;
+	}
+
+	public List<ProjectUser> getUserProjects() {
+		return userProjects;
+	}
+
+	public void setUserProjects(List<ProjectUser> userProjects) {
+		this.userProjects = userProjects;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package taskManagement.Entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -17,8 +18,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "story")
-public class Story {
+@Table(name = "project")
+public class Project {
 
 	@Id
 	@GeneratedValue
@@ -33,23 +34,26 @@ public class Story {
 	@Size(min = 1, max = 10000)
 	private String description;
 
-	private String start_time;
-	private String finish_time;
-
+	private Date start_time;
+	private Date finish_time;
+	
 	@NotNull
 	private int state;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "created_by")
-	private User user;
+	@JoinColumn(name = "project_owner")
+	private User projectOwner;
 
-	@OneToMany(mappedBy = "story", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Task> task = new ArrayList<Task>();
+	
+	@OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<ProjectUser> projectUser = new ArrayList<ProjectUser>();
 
-	public Story() {
+	public Project() {
 
 	}
-	public Story(String name, String description, String start_time, String finish_time, int state) {
+	public Project(String name, String description, Date start_time, Date finish_time, int state) {
 		this.name=name;
 		this.description=description;
 		this.start_time=start_time;
@@ -81,22 +85,18 @@ public class Story {
 		this.description = description;
 	}
 
-	public String getStart_time() {
+	public Date getStart_time() {
 		return start_time;
 	}
-
-	public void setStart_time(String start_time) {
+	public void setStart_time(Date start_time) {
 		this.start_time = start_time;
 	}
-
-	public String getFinish_time() {
+	public Date getFinish_time() {
 		return finish_time;
 	}
-
-	public void setFinish_time(String finish_time) {
+	public void setFinish_time(Date finish_time) {
 		this.finish_time = finish_time;
 	}
-
 	public int getState() {
 		return state;
 	}
@@ -105,12 +105,12 @@ public class Story {
 		this.state = state;
 	}
 
-	public User getUser() {
-		return user;
+	public User getProjectOwner() {
+		return projectOwner;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setProjectOwner(User user) {
+		this.projectOwner = user;
 	}
 
 	public List<Task> getTask() {
@@ -120,10 +120,9 @@ public class Story {
 	public void setTask(List<Task> task) {
 		this.task = task;
 	}
-
 	@Override
 	public String toString() {
-		return "Story [id=" + id + ", name=" + name + ", description=" + description + ", start_time=" + start_time
+		return "Project [id=" + id + ", name=" + name + ", description=" + description + ", start_time=" + start_time
 				+ ", finish_time=" + finish_time + ", state=" + state + "]";
 	}
 
