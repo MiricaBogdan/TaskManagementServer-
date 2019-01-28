@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,7 +23,7 @@ import javax.validation.constraints.Size;
 public class Project {
 
 	@Id
-	@GeneratedValue
+	 @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Column(length = 200)
@@ -119,6 +120,14 @@ public class Project {
 
 	public void setTask(List<Task> task) {
 		this.task = task;
+	}
+	
+	
+	public List<ProjectUser> getProjectUser() {
+		return projectUser;
+	}
+	public void setProjectUser(List<ProjectUser> projectUser) {
+		this.projectUser = projectUser;
 	}
 	@Override
 	public String toString() {

@@ -15,18 +15,19 @@ import taskManagement.Entity.Project;
 import taskManagement.Entity.ProjectUser;
 import taskManagement.Entity.User;
 import taskManagement.dto.ProjectDTO;
+import taskManagement.dto.UserDTO;
 
 @Stateless
 @Transactional(SUPPORTS)
 public class ProjectDao {
 
-	 @PersistenceContext(unitName = "PersistenceUnit")
-	 private EntityManager em;
-	
-	//Create a new Project in the database
-	@Transactional(REQUIRED) 
-	public Project createProject(@NotNull ProjectDTO projectDto){
-		Project project=new Project();
+	@PersistenceContext(unitName = "PersistenceUnit")
+	private EntityManager em;
+
+	// Create a new Project in the database
+	@Transactional(REQUIRED)
+	public Project createProject(@NotNull ProjectDTO projectDto) {
+		Project project = new Project();
 		project.setName(projectDto.getName());
 		project.setDescription(projectDto.getDescription());
 		project.setState(projectDto.getState());
@@ -36,11 +37,11 @@ public class ProjectDao {
 		em.persist(project);
 		return project;
 	}
-	
-	//Select a project from database
+
+	// Select a project from database
 	public ProjectDTO selectProject(@NotNull int id) {
 		Project project = em.find(Project.class, id);
-		ProjectDTO projectDto=new ProjectDTO();
+		ProjectDTO projectDto = new ProjectDTO();
 		projectDto.setId(project.getId());
 		projectDto.setName(project.getName());
 		projectDto.setDescription(project.getDescription());
@@ -50,22 +51,27 @@ public class ProjectDao {
 		projectDto.setProject_owner(project.getProjectOwner().getId());
 		return projectDto;
 	}
-		
-	//Update the detail about task
+
+	// Update the detail about task
 	@Transactional(REQUIRED)
-	public ProjectDTO updateProject(@NotNull ProjectDTO projectDto)
-	{
-		Project updatedproject=em.find(Project.class, projectDto.getId());
-		updatedproject.setName(projectDto.getName());
-		updatedproject.setDescription(projectDto.getDescription());
-		updatedproject.setState(projectDto.getState());
-		updatedproject.setStart_time(projectDto.getStart_time());
-		updatedproject.setFinish_time(projectDto.getFinish_time());
-		updatedproject.setProjectOwner(em.find(User.class, projectDto.getProject_owner()));
+	public ProjectDTO updateProject(@NotNull ProjectDTO projectDto) {
+		Project updatedproject = em.find(Project.class, projectDto.getId());
+		if ((projectDto.getState() == 0) || (projectDto.getState() == 1))
+			updatedproject.setState(projectDto.getState());
+		if (projectDto.getName() != null)
+			updatedproject.setName(projectDto.getName());
+		if (projectDto.getDescription() != null)
+			updatedproject.setDescription(projectDto.getDescription());
+		if (projectDto.getStart_time() != null)
+			updatedproject.setStart_time(projectDto.getStart_time());
+		if (projectDto.getFinish_time() != null)
+			updatedproject.setFinish_time(projectDto.getFinish_time());
+		if (projectDto.getProject_owner() != null)
+			updatedproject.setProjectOwner(em.find(User.class, projectDto.getProject_owner()));
 		return projectDto;
 	}
-	
-	//Delete a project from database
+
+	// Delete a project from database
 	@Transactional(REQUIRED)
 	public void deleteProject(@NotNull int id) {
 		Project project = em.find(Project.class, id);
@@ -73,19 +79,28 @@ public class ProjectDao {
 	}
 
 	public List<ProjectDTO> getProjectsForUser(Integer id) {
-		List<ProjectDTO> userProjects=new ArrayList<>();
-		if(id==null) {
+		List<ProjectDTO> userProjects = new ArrayList<>();
+		if (id == null) {
 			return userProjects;
 		}
-		
-		User u = em.find(User.class,id);
+
+		User u = em.find(User.class, id);
 		for (ProjectUser pu : u.getUserProjects()) {
-			Project proj=pu.getProject();
-			ProjectDTO projDTO=new ProjectDTO(proj.getId(),proj.getName(),proj.getDescription(),proj.getStart_time(),proj.getFinish_time(),proj.getState(),proj.getProjectOwner().getId());
+			Project proj = pu.getProject();
+			ProjectDTO projDTO = new ProjectDTO(proj.getId(), proj.getName(), proj.getDescription(),
+					proj.getStart_time(), proj.getFinish_time(), proj.getState(), proj.getProjectOwner().getId());
+
+			List<UserDTO> projectUsers = new ArrayList<>();
+
+			for (ProjectUser projUser : proj.getProjectUser()) {
+				UserDTO userDTO = new UserDTO(projUser.getUser().getId(), projUser.getUser().getName(), "");
+				projectUsers.add(userDTO);
+			}
+			projDTO.setProjectUser(projectUsers);
 			userProjects.add(projDTO);
 		}
-		
+
 		return userProjects;
 	}
-	
+
 }

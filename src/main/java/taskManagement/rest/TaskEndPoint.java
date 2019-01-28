@@ -2,7 +2,6 @@ package taskManagement.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-import java.net.URI;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -15,11 +14,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import taskManagement.Entity.Task;
+
 import taskManagement.dao.TaskDao;
 import taskManagement.dto.TaskDTO;
 
@@ -31,10 +28,9 @@ public class TaskEndPoint {
 
 	@POST
     @Consumes(APPLICATION_JSON)
-	public Response createTask(TaskDTO taskDto, @Context UriInfo uriInfo) {
-		Task task=taskDao.createTask(taskDto);
-		URI createdURI = uriInfo.getBaseUriBuilder().path(task.getId().toString()).build();
-		return Response.created(createdURI).build();
+	public Response createTask(TaskDTO taskDto) {
+		TaskDTO task=taskDao.createTask(taskDto);
+		return Response.ok(task).build();
 	}
 
 	@GET

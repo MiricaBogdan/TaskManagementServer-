@@ -16,7 +16,7 @@ public class ProjectDTO {
 	private int state;
 	private Integer project_owner;
 	private List<Task> task = new ArrayList<Task>();
-	private List<ProjectUser> projectUser = new ArrayList<ProjectUser>();
+	private List<UserDTO> projectUsers = new ArrayList<UserDTO>();
 	
 
 	
@@ -25,9 +25,8 @@ public class ProjectDTO {
 	}
 
 	
-	
 	public ProjectDTO(Integer id, String name, String description, Date start_time, Date finish_time, int state,
-			Integer project_owner, List<Task> task, List<ProjectUser> projectUser) {
+			Integer project_owner, List<Task> task, List<UserDTO> projectUsers) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -37,13 +36,13 @@ public class ProjectDTO {
 		this.state = state;
 		this.project_owner = project_owner;
 		this.task = task;
-		this.projectUser = projectUser;
+		this.projectUsers = projectUsers;
 	}
 
 
 
 	public ProjectDTO(String name, String description, Date start_time, Date finish_time, int state,
-			Integer project_owner, List<Task> task, List<ProjectUser> projectUser) {
+			Integer project_owner, List<Task> task, List<UserDTO> projectUsers) {
 		super();
 		this.name = name;
 		this.description = description;
@@ -52,9 +51,8 @@ public class ProjectDTO {
 		this.state = state;
 		this.project_owner = project_owner;
 		this.task = task;
-		this.projectUser = projectUser;
+		this.projectUsers = projectUsers;
 	}
-
 
 
 	public ProjectDTO(Integer id, String name, String description, Date start_time, Date finish_time, int state,
@@ -126,11 +124,11 @@ public class ProjectDTO {
 		this.task = task;
 	}
 	
-	public List<ProjectUser> getProjectUser() {
-		return projectUser;
+	public List<UserDTO> getProjectUser() {
+		return projectUsers;
 	}
-	public void setProjectUser(List<ProjectUser> projectUser) {
-		this.projectUser = projectUser;
+	public void setProjectUser(List<UserDTO> projectUsers) {
+		this.projectUsers = projectUsers;
 	}
 	
 	@Override

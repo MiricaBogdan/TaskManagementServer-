@@ -4,6 +4,7 @@ import static javax.transaction.Transactional.TxType.REQUIRED;
 import static javax.transaction.Transactional.TxType.SUPPORTS;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -26,18 +27,22 @@ public class TaskDao {
 
 	// Create a new task in the database
 	@Transactional(REQUIRED)
-	public Task createTask(@NotNull TaskDTO taskDto) {
+	public TaskDTO createTask(@NotNull TaskDTO taskDto) {
+		System.out.println(taskDto);
 		Task task = new Task();
 		task.setName(taskDto.getName());
 		task.setDescription(taskDto.getDescription());
 		task.setState(taskDto.getState());
 		task.setState(taskDto.getState());
-		task.setStart_time(taskDto.getStart_time());
+		task.setStart_time(new Date());
+		task.setFinish_time(taskDto.getFinish_time());
 		task.setCreatedByUser(em.find(User.class, taskDto.getCreated_by()));
 		task.setAssignedToUser(em.find(User.class, taskDto.getAssigned_to()));
 		task.setProject(em.find(Project.class, taskDto.getProject_id()));
 		em.persist(task);
-		return task;
+		
+		TaskDTO taskDTO=new TaskDTO(task.getId(),task.getName(),task.getDescription(),task.getState(),task.getAssignedToUser().getId(),task.getProject().getId(),task.getStart_time(),task.getFinish_time());
+		return taskDTO;
 	}
 
 	// Select a task from database
@@ -83,6 +88,9 @@ public class TaskDao {
 	@Transactional(REQUIRED)
 	public void deletetask(@NotNull int id) {
 		Task task = em.find(Task.class, id);
+		task.setAssignedToUser(null);
+		task.setProject(null);
+		task.setCreatedByUser(null);
 		em.remove(task);
 	}
 
