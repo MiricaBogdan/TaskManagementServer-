@@ -1,4 +1,4 @@
-package taskManagement.rest;
+package taskManagement.Config;
 
 import java.io.IOException;
 
