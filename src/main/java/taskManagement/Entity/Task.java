@@ -52,7 +52,7 @@ public class Task {
 	}
 
 	@NotNull
-	private int state;
+	private Integer state;
 	
 	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	@JoinColumn(name = "created_by")
@@ -107,11 +107,11 @@ public class Task {
 		this.description = description;
 	}
 
-	public int getState() {
+	public Integer getState() {
 		return state;
 	}
 
-	public void setState(int state) {
+	public void setState(Integer state) {
 		this.state = state;
 	}
 

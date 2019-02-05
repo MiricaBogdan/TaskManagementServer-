@@ -17,6 +17,7 @@ import taskManagement.Entity.Project;
 import taskManagement.Entity.Task;
 import taskManagement.Entity.User;
 import taskManagement.dto.TaskDTO;
+import taskManagement.dto.UserDTO;
 
 @Stateless
 @Transactional(SUPPORTS)
@@ -37,11 +38,15 @@ public class TaskDao {
 		task.setStart_time(new Date());
 		task.setFinish_time(taskDto.getFinish_time());
 		task.setCreatedByUser(em.find(User.class, taskDto.getCreated_by()));
-		task.setAssignedToUser(em.find(User.class, taskDto.getAssigned_to()));
+		task.setAssignedToUser(em.find(User.class, taskDto.getAssigned_to().getId()));
 		task.setProject(em.find(Project.class, taskDto.getProject_id()));
 		em.persist(task);
 		
-		TaskDTO taskDTO=new TaskDTO(task.getId(),task.getName(),task.getDescription(),task.getState(),task.getAssignedToUser().getId(),task.getProject().getId(),task.getStart_time(),task.getFinish_time());
+		UserDTO assisgned_to=new UserDTO();
+		assisgned_to.setId(task.getAssignedToUser().getId());
+		assisgned_to.setName(task.getAssignedToUser().getName());
+		
+		TaskDTO taskDTO=new TaskDTO(task.getId(),task.getName(),task.getDescription(),task.getState(),assisgned_to,task.getProject().getId(),task.getStart_time(),task.getFinish_time());
 		return taskDTO;
 	}
 
@@ -57,7 +62,12 @@ public class TaskDao {
 		taskDto.setState(task.getState());
 		taskDto.setCreated_by(task.getCreatedByUser().getId());
 		taskDto.setProject_id(task.getProject().getId());
-		taskDto.setAssigned_to(task.getAssignedToUser().getId());
+		
+		UserDTO userDTO=new UserDTO();
+		userDTO.setId(task.getAssignedToUser().getId());
+		userDTO.setName(task.getAssignedToUser().getName());
+		
+		taskDto.setAssigned_to(userDTO);
 		return taskDto;
 	}
 
@@ -65,7 +75,7 @@ public class TaskDao {
 	@Transactional(REQUIRED)
 	public TaskDTO updateTask(@NotNull TaskDTO taskDto) {
 		Task updatedTask = em.find(Task.class, taskDto.getId());
-		if ((taskDto.getState() == 0) || (taskDto.getState() == 1))
+		if ((taskDto.getState() !=null)&& ((taskDto.getState() == 0) || (taskDto.getState() == 1)))
 			updatedTask.setState(taskDto.getState());
 		if (taskDto.getName() != null)
 			updatedTask.setName(taskDto.getName());
@@ -80,7 +90,7 @@ public class TaskDao {
 		if (taskDto.getProject_id()!= null)
 			updatedTask.setProject(em.find(Project.class, taskDto.getProject_id()));
 		if (taskDto.getAssigned_to()!= null)
-			updatedTask.setAssignedToUser(em.find(User.class, taskDto.getAssigned_to()));
+			updatedTask.setAssignedToUser(em.find(User.class, taskDto.getAssigned_to().getId()));
 		return taskDto;
 	}
 
@@ -102,7 +112,11 @@ public class TaskDao {
 
 		Project project = em.find(Project.class, id);
 		for (Task task : project.getTask()) {
-			TaskDTO taskDto = new TaskDTO(task.getId(),task.getName(), task.getDescription(), task.getState(), task.getAssignedToUser().getId(), task.getProject().getId(), task.getStart_time(),
+			UserDTO assisgned_to=new UserDTO();
+			assisgned_to.setId(task.getAssignedToUser().getId());
+			assisgned_to.setName(task.getAssignedToUser().getName());
+			
+			TaskDTO taskDto = new TaskDTO(task.getId(),task.getName(), task.getDescription(), task.getState(), assisgned_to, task.getProject().getId(), task.getStart_time(),
 					task.getFinish_time());
 			tasks.add(taskDto);
 		}

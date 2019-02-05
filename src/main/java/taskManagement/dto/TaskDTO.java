@@ -6,9 +6,9 @@ public class TaskDTO {
 	private Integer id;
 	private String name;
 	private String description;
-	private int state;
+	private Integer state;
 	private Integer created_by;
-	private Integer assigned_to;
+	private UserDTO assigned_to;
 	private Integer project_id;
 	private Date start_time;
 	private Date finish_time;
@@ -26,7 +26,7 @@ public class TaskDTO {
 		this.finish_time = finish_time;
 	}
 
-	public TaskDTO(Integer id, String name, String description, int state, Integer assigned_to, Integer project_id,
+	public TaskDTO(Integer id, String name, String description, int state, UserDTO assigned_to, Integer project_id,
 			Date start_time, Date finish_time) {
 		super();
 		this.id = id;
@@ -71,11 +71,11 @@ public class TaskDTO {
 		this.project_id = project_id;
 	}
 
-	public Integer getAssigned_to() {
+	public UserDTO getAssigned_to() {
 		return assigned_to;
 	}
 
-	public void setAssigned_to(Integer assigned_to) {
+	public void setAssigned_to(UserDTO assigned_to) {
 		this.assigned_to = assigned_to;
 	}
 
@@ -103,11 +103,11 @@ public class TaskDTO {
 		this.description = description;
 	}
 
-	public int getState() {
+	public Integer getState() {
 		return state;
 	}
 
-	public void setState(int state) {
+	public void setState(Integer state) {
 		this.state = state;
 	}
 

@@ -58,6 +58,7 @@ public class TaskEndPoint {
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 	public Response updateTask(@PathParam("id") Integer id,TaskDTO taskDto) {
+		System.out.println(taskDto);
 		taskDto.setId(id);
 		taskDto=taskDao.updateTask(taskDto);
 		return Response.ok(taskDto).build();

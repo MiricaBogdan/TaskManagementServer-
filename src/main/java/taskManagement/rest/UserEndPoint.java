@@ -1,5 +1,4 @@
 package taskManagement.rest;
-
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.net.URI;
 import java.util.List;
@@ -21,10 +20,9 @@ import taskManagement.dao.UserDao;
 
 @Path("/user")
 public class UserEndPoint {
-
 	@Inject
 	UserDao userDao;
-
+	
 	@POST
     @Consumes(APPLICATION_JSON)
 	public Response createUser(User user, @Context UriInfo uriInfo) {
@@ -32,7 +30,6 @@ public class UserEndPoint {
 		URI createdURI = uriInfo.getBaseUriBuilder().path(user.getId().toString()).build();
 		return Response.created(createdURI).build();
 	}
-
 	@GET
     @Path("{id}")
     @Produces(APPLICATION_JSON)
@@ -44,7 +41,6 @@ public class UserEndPoint {
 		}
 		return Response.ok(userDto).build();
 	}
-
 	@PUT
 	@Path("{id}")
 	@Consumes(APPLICATION_JSON)
@@ -54,14 +50,12 @@ public class UserEndPoint {
 		userDto=userDao.updateUser(userDto);
 		return Response.ok(userDto).build();
 	}
-
 	@DELETE
 	@Path("{id}")
 	public Response deleteUser(@PathParam("id") Integer id) {
 		userDao.deleteUser(id);
 		return Response.noContent().build();
 	}
-	
 	@GET
 	@Produces(APPLICATION_JSON)
 	public Response findAll() {
@@ -72,7 +66,6 @@ public class UserEndPoint {
 		}
 		return Response.ok(userDtoList).build();
 	}
-
 	@POST
     @Path("/login")
     @Consumes(APPLICATION_JSON)
